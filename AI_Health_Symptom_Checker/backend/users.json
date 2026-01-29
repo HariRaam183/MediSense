@@ -1,0 +1,26 @@
+{
+  "hariraam183@gmail.com": {
+    "name": "Hari Raam",
+    "email": "hariraam183@gmail.com",
+    "password": "cd2b2c8dab54bfa295b04a16d7b63643643bf8fe31309638a8b052c91570a6ff",
+    "age": "20",
+    "gender": "Male",
+    "created_at": "2026-01-29 00:14:10"
+  },
+  "tharun@gmail.com": {
+    "name": "Tharun",
+    "email": "tharun@gmail.com",
+    "password": "103d4a53ed38afd4fb317529365e4c7d9091c4ebf37594d19a5a151ce8b5fd18",
+    "age": "20",
+    "gender": "Male",
+    "created_at": "2026-01-29 00:18:21"
+  },
+  "anjkaafk": {
+    "name": "Nikesh",
+    "email": "anjkaafk",
+    "password": "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
+    "age": "25",
+    "gender": "Male",
+    "created_at": "2026-01-29 11:34:53"
+  }
+}

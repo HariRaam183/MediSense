@@ -1,0 +1,130 @@
+{
+  "hariraam183@gmail.com": [
+    {
+      "id": 2,
+      "date": "2026-01-29 11:36:14",
+      "symptoms_text": "I have sore throat and cough ",
+      "symptoms_detected": [
+        "cough",
+        "throat_irritation"
+      ],
+      "disease": "Common Cold",
+      "confidence": 65,
+      "urgency": "Low",
+      "possible_conditions": [
+        "GERD"
+      ],
+      "age": "20",
+      "duration": "1"
+    },
+    {
+      "id": 1,
+      "date": "2026-01-29 00:14:53",
+      "symptoms_text": "I have  fever and vomiting",
+      "symptoms_detected": [
+        "vomiting",
+        "high_fever"
+      ],
+      "disease": "Jaundice",
+      "confidence": 63.2,
+      "urgency": "Low",
+      "possible_conditions": [
+        "AIDS",
+        "Heart attack"
+      ],
+      "age": "20",
+      "duration": "2"
+    }
+  ],
+  "tharun@gmail.com": [
+    {
+      "id": 5,
+      "date": "2026-01-29 11:51:59",
+      "symptoms_text": "I have chest pain and sweating",
+      "symptoms_detected": [
+        "chest_pain",
+        "sweating"
+      ],
+      "disease": "Heart attack",
+      "confidence": 69.3,
+      "urgency": "High",
+      "possible_conditions": [
+        "Hypertension",
+        "GERD"
+      ],
+      "age": "20",
+      "duration": "2"
+    },
+    {
+      "id": 4,
+      "date": "2026-01-29 11:51:42",
+      "symptoms_text": "I have stomach pain and vomiting",
+      "symptoms_detected": [
+        "vomiting",
+        "stomach_pain"
+      ],
+      "disease": "GERD",
+      "confidence": 65.7,
+      "urgency": "Low",
+      "possible_conditions": [
+        "Drug Reaction",
+        "Heart attack"
+      ],
+      "age": "20",
+      "duration": "2"
+    },
+    {
+      "id": 3,
+      "date": "2026-01-29 00:19:40",
+      "symptoms_text": "i have fever and vomiting",
+      "symptoms_detected": [
+        "vomiting",
+        "high_fever"
+      ],
+      "disease": "Jaundice",
+      "confidence": 63.2,
+      "urgency": "Low",
+      "possible_conditions": [
+        "AIDS",
+        "Heart attack"
+      ],
+      "age": "20",
+      "duration": "2"
+    },
+    {
+      "id": 2,
+      "date": "2026-01-29 00:19:30",
+      "symptoms_text": "i have fever and headache",
+      "symptoms_detected": [
+        "headache",
+        "high_fever"
+      ],
+      "disease": "AIDS",
+      "confidence": 55.6,
+      "urgency": "High",
+      "possible_conditions": [
+        "Paralysis (brain hemorrhage)"
+      ],
+      "age": "20",
+      "duration": "2"
+    },
+    {
+      "id": 1,
+      "date": "2026-01-29 00:19:05",
+      "symptoms_text": "i have headache and fever",
+      "symptoms_detected": [
+        "headache",
+        "high_fever"
+      ],
+      "disease": "AIDS",
+      "confidence": 55.6,
+      "urgency": "High",
+      "possible_conditions": [
+        "Paralysis (brain hemorrhage)"
+      ],
+      "age": "20",
+      "duration": "2"
+    }
+  ],
+  "anjkaafk": []
+}
