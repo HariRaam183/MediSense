@@ -1,6 +1,9 @@
+
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+
+const API = process.env.REACT_APP_API_URL;
 
 function History() {
   const [history, setHistory] = useState([]);
@@ -32,7 +35,7 @@ function History() {
 
   const fetchHistory = async (email) => {
     try {
-      const res = await axios.get(`http://127.0.0.1:5000/history/${email}`);
+      const res = await axios.get(`${API}/history/${email}`);
       setHistory(res.data.history || []);
     } catch (err) {
       console.error("Error fetching history:", err);
@@ -42,9 +45,8 @@ function History() {
 
   const clearHistory = async () => {
     if (!window.confirm("Are you sure you want to clear all history?")) return;
-    
     try {
-      await axios.delete(`http://127.0.0.1:5000/history/clear/${user.email}`);
+      await axios.delete(`${API}/history/clear/${user.email}`);
       setHistory([]);
       alert("History cleared successfully");
     } catch (err) {
