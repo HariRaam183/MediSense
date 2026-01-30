@@ -51,7 +51,7 @@ function MedicalForm() {
       
       // Save to history if prediction was successful
       if (res.data.confidence > 0 && user) {
-        await axios.post("http://127.0.0.1:5000/history/add", {
+        await axios.post("https://medisense-zpu2.onrender.com/history/add", {
           email: user.email,
           symptoms_text: issues,
           symptoms_detected: res.data.symptoms_detected,
