@@ -41,7 +41,7 @@ function MedicalForm() {
     }
     setLoading(true);
     try {
-      const res = await axios.post("http://127.0.0.1:5000/predict_text", {
+      const res = await axios.post("https://medisense-zpu2.onrender.com/predict_text", {
         age,
         gender,
         duration,
