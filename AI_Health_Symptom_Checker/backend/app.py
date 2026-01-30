@@ -560,4 +560,4 @@ def clear_history(email):
     return jsonify({"success": True, "message": "History cleared"})
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=10000)
