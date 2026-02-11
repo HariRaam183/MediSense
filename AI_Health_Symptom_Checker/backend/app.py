@@ -58,6 +58,137 @@ except:
 # Dangerous diseases list for urgency
 dangerous_diseases = ["Paralysis (brain hemorrhage)", "Heart attack", "Stroke", "Pneumonia", "Tuberculosis", "Hepatitis B", "Hepatitis C", "AIDS", "Malaria", "Dengue", "Typhoid"]
 
+# Symptom severity scores (1-10 scale, 10 being most severe)
+symptom_severity = {
+    # Critical symptoms (9-10)
+    "chest_pain": 10,
+    "breathlessness": 9,
+    "continuous_sneezing": 9,
+    "paralysis": 10,
+    "coma": 10,
+    "heart_attack": 10,
+    
+    # High severity (7-8)
+    "high_fever": 8,
+    "vomiting": 7,
+    "bleeding": 8,
+    "seizures": 9,
+    "dizziness": 7,
+    "loss_of_balance": 8,
+    "altered_sensorium": 8,
+    "blurred_and_distorted_vision": 7,
+    
+    # Medium severity (4-6)
+    "headache": 6,
+    "stomach_pain": 5,
+    "abdominal_pain": 6,
+    "nausea": 5,
+    "fatigue": 5,
+    "weakness": 5,
+    "chills": 5,
+    "sweating": 4,
+    "cough": 5,
+    "throat_irritation": 4,
+    "skin_rash": 5,
+    
+    # Low severity (1-3)
+    "itching": 3,
+    "mild_fever": 3,
+    "loss_of_appetite": 3,
+    "restlessness": 3,
+    "cold": 2,
+    "sneezing": 2,
+    "runny_nose": 2,
+}
+
+# Minimum confidence threshold for showing predictions
+CONFIDENCE_THRESHOLD = 35
+
+# Rule-based medical filters (immediate medical attention needed if these symptoms present)
+critical_symptom_patterns = {
+    "chest_pain": ["Heart attack", "Angina", "Myocardial infarction"],
+    "breathlessness": ["Asthma", "Pneumonia", "Heart attack"],
+    "paralysis": ["Stroke", "Paralysis (brain hemorrhage)"],
+    "seizures": ["Epilepsy"],
+    "continuous_sneezing": ["Allergic rhinitis", "Common cold"],
+}
+
+# Doctor recommendation mapping (Disease -> Specialist type)
+disease_to_specialist = {
+    # Cardiovascular
+    "Heart attack": "Cardiologist",
+    "Hypertension": "Cardiologist",
+    "Varicose veins": "Vascular Surgeon",
+    
+    # Neurological
+    "Paralysis (brain hemorrhage)": "Neurologist",
+    "Stroke": "Neurologist",
+    "Migraine": "Neurologist",
+    "Cervical spondylosis": "Neurologist/Orthopedic",
+    
+    # Respiratory
+    "Pneumonia": "Pulmonologist",
+    "Bronchial Asthma": "Pulmonologist",
+    "Tuberculosis": "Pulmonologist",
+    "Common Cold": "General Physician",
+    
+    # Gastroenterology
+    "Peptic ulcer diseae": "Gastroenterologist",
+    "GERD": "Gastroenterologist",
+    "Chronic cholestasis": "Gastroenterologist",
+    "Hepatitis A": "Gastroenterologist/Hepatologist",
+    "Hepatitis B": "Gastroenterologist/Hepatologist",
+    "Hepatitis C": "Gastroenterologist/Hepatologist",
+    "Hepatitis D": "Gastroenterologist/Hepatologist",
+    "Hepatitis E": "Gastroenterologist/Hepatologist",
+    "Alcoholic hepatitis": "Gastroenterologist/Hepatologist",
+    "Jaundice": "Gastroenterologist",
+    
+    # Infectious Diseases
+    "Malaria": "Infectious Disease Specialist",
+    "Dengue": "Infectious Disease Specialist",
+    "Typhoid": "Infectious Disease Specialist",
+    "AIDS": "Infectious Disease Specialist",
+    "Chicken pox": "General Physician",
+    
+    # Endocrinology
+    "Diabetes": "Endocrinologist",
+    "Hyperthyroidism": "Endocrinologist",
+    "Hypothyroidism": "Endocrinologist",
+    "Hypoglycemia": "Endocrinologist",
+    
+    # Dermatology
+    "Psoriasis": "Dermatologist",
+    "Fungal infection": "Dermatologist",
+    "Acne": "Dermatologist",
+    "Impetigo": "Dermatologist",
+    
+    # Rheumatology
+    "Arthritis": "Rheumatologist",
+    "Osteoarthristis": "Rheumatologist/Orthopedic",
+    
+    # Urology/Nephrology
+    "Urinary tract infection": "Urologist",
+    "Drug Reaction": "Allergist/Immunologist",
+    "Allergy": "Allergist/Immunologist",
+}
+
+def get_doctor_recommendations(diseases):
+    """Get specialist recommendations for given diseases"""
+    recommendations = []
+    seen_specialists = set()
+    
+    for disease in diseases:
+        specialist = disease_to_specialist.get(disease, "General Physician")
+        if specialist not in seen_specialists:
+            recommendations.append({
+                "specialist": specialist,
+                "disease": disease
+            })
+            seen_specialists.add(specialist)
+    
+    return recommendations
+
 # Comprehensive symptom aliases for natural language matching
 symptom_aliases = {
     # Stomach related
@@ -266,18 +397,47 @@ def calculate_disease_match_score(symptoms, disease):
     match_ratio = len(common) / len(input_symptoms)
     return match_ratio
 
-def get_realistic_prediction(symptoms):
-    """Get prediction with realistic confidence based on symptom-disease matching"""
+def calculate_symptom_severity_score(symptoms):
+    """Calculate overall severity score based on symptoms (0-10 scale)"""
     if not symptoms:
-        return None, 0, []
+        return 0
+    
+    total_severity = 0
+    count = 0
+    
+    for symptom in symptoms:
+        if symptom in symptom_severity:
+            total_severity += symptom_severity[symptom]
+            count += 1
+        else:
+            # Unknown symptoms get medium severity
+            total_severity += 5
+            count += 1
+    
+    return round(total_severity / count, 1) if count > 0 else 0
+
+def check_critical_symptoms(symptoms):
+    """Check if any critical symptoms are present that require immediate attention"""
+    for symptom in symptoms:
+        if symptom in critical_symptom_patterns:
+            return True, critical_symptom_patterns[symptom]
+    return False, []
+
+def get_realistic_prediction(symptoms):
+    """Get TOP 3 predictions with realistic confidence and medical filtering"""
+    if not symptoms:
+        return [], 0
+    
+    # Check for critical symptoms first (rule-based filter)
+    is_critical, critical_diseases = check_critical_symptoms(symptoms)
     
     # Get model probabilities
     input_vector = symptom_encoder.transform([symptoms])
     probs = big_model.predict_proba(input_vector)[0]
     classes = big_model.classes_
     
-    # Get top 5 predictions from model
-    top_indices = probs.argsort()[-5:][::-1]
+    # Get top 10 predictions from model
+    top_indices = probs.argsort()[-10:][::-1]
     
     candidates = []
     for idx in top_indices:
@@ -287,8 +447,11 @@ def get_realistic_prediction(symptoms):
         # Calculate match score based on symptoms
         match_score = calculate_disease_match_score(symptoms, disease)
         
-        # Combined score: model probability + match score bonus
-        combined_score = model_prob * 0.6 + match_score * 0.4
+        # Boost score if disease matches critical symptom patterns
+        critical_boost = 0.2 if (is_critical and disease in critical_diseases) else 0
+        
+        # Combined score: model probability + match score + critical boost
+        combined_score = model_prob * 0.5 + match_score * 0.3 + critical_boost + (len(symptoms) / 20) * 0.2
         
         candidates.append({
             'disease': disease,
@@ -300,27 +463,46 @@ def get_realistic_prediction(symptoms):
     # Sort by combined score
     candidates.sort(key=lambda x: x['combined_score'], reverse=True)
     
-    # Get best prediction
-    best = candidates[0]
+    # Calculate severity score
+    severity_score = calculate_symptom_severity_score(symptoms)
     
-    # Calculate realistic confidence based on:
-    # - Number of symptoms (more symptoms = higher confidence)
-    # - Match score (better match = higher confidence)
-    # - Model probability
+    # Get top 3 predictions
+    top_3_predictions = []
+    for i, candidate in enumerate(candidates[:3]):
+        # Calculate realistic confidence based on:
+        # - Number of symptoms (more symptoms = higher confidence)
+        # - Match score (better match = higher confidence)
+        # - Model probability
+        # - Severity (higher severity = more confidence in serious diseases)
+        
+        symptom_count_factor = min(len(symptoms) / 4, 1.0)  # Max factor at 4+ symptoms
+        position_penalty = i * 0.15  # Reduce confidence for 2nd and 3rd predictions
+        
+        # Base confidence calculation
+        raw_confidence = (
+            candidate['model_prob'] * 0.4 + 
+            candidate['match_score'] * 0.3 + 
+            symptom_count_factor * 0.2 +
+            (severity_score / 10) * 0.1
+        )
+        
+        # Apply position penalty
+        raw_confidence = raw_confidence * (1 - position_penalty)
+        
+        # Scale to realistic range (35% - 92%)
+        confidence = CONFIDENCE_THRESHOLD + (raw_confidence * (92 - CONFIDENCE_THRESHOLD))
+        confidence = min(confidence, 92)  # Cap at 92% (never 100% certain)
+        confidence = round(confidence, 1)
+        
+        # Only include if confidence is above threshold
+        if confidence >= CONFIDENCE_THRESHOLD:
+            top_3_predictions.append({
+                'disease': candidate['disease'],
+                'confidence': confidence,
+                'is_critical': candidate['disease'] in dangerous_diseases
+            })
     
-    symptom_count_factor = min(len(symptoms) / 4, 1.0)  # Max factor at 4+ symptoms
-    
-    # Realistic confidence formula
-    raw_confidence = (best['model_prob'] * 0.5 + best['match_score'] * 0.3 + symptom_count_factor * 0.2)
-    
-    # Scale to realistic range (40% - 95%)
-    confidence = 40 + (raw_confidence * 55)
-    confidence = min(confidence, 95)  # Cap at 95%
-    
-    # Get other possible diseases for comparison
-    other_diseases = [c['disease'] for c in candidates[1:4] if c['combined_score'] > 0.1]
-    
-    return best['disease'], round(confidence, 1), other_diseases
+    return top_3_predictions, severity_score
 
 @app.route("/")
 def home():
@@ -361,11 +543,11 @@ def predict_text():
     
     if not text:
         return jsonify({
-            "disease": "Please describe your symptoms",
-            "urgency": "Low",
-            "confidence": 0,
+            "success": False,
+            "predictions": [],
+            "severity_score": 0,
             "symptoms_detected": [],
-            "message": "Enter your symptoms to get a prediction"
+            "message": "Please describe your symptoms to get a prediction"
         })
 
     # Extract symptoms using smart matching
@@ -376,33 +558,60 @@ def predict_text():
 
     if len(found) == 0:
         return jsonify({
-            "disease": "Unable to detect symptoms",
-            "urgency": "Low",
-            "confidence": 0,
+            "success": False,
+            "predictions": [],
+            "severity_score": 0,
             "symptoms_detected": [],
-            "message": "Please describe your symptoms more clearly (e.g., fever, headache, stomach pain, vomiting)"
+            "message": "Unable to detect symptoms. Please describe more clearly (e.g., fever, headache, stomach pain, vomiting)"
         })
 
-    # Get realistic prediction
-    disease, confidence, alternatives = get_realistic_prediction(found)
+    # Get TOP 3 predictions with severity scoring
+    top_3_predictions, severity_score = get_realistic_prediction(found)
     
-    print(f"Prediction: {disease} ({confidence}%)")
-    print(f"Alternatives: {alternatives}")
+    if not top_3_predictions:
+        return jsonify({
+            "success": False,
+            "predictions": [],
+            "severity_score": severity_score,
+            "symptoms_detected": found,
+            "message": f"Confidence too low ({CONFIDENCE_THRESHOLD}% threshold). Please provide more specific symptoms."
+        })
 
-    # Urgency logic based on disease severity and confidence
-    if disease in dangerous_diseases:
+    print(f"Top 3 Predictions: {top_3_predictions}")
+    print(f"Severity Score: {severity_score}")
+
+    # Determine overall urgency based on best prediction and severity
+    best_prediction = top_3_predictions[0]
+    
+    if best_prediction['is_critical'] or severity_score >= 8:
         urgency = "High"
-    elif confidence > 75:
+        urgency_message = "⚠️ Seek immediate medical attention"
+    elif severity_score >= 6 or best_prediction['confidence'] > 75:
         urgency = "Medium"
+        urgency_message = "Consult a doctor soon"
     else:
         urgency = "Low"
+        urgency_message = "Monitor symptoms, see doctor if they worsen"
+
+    # Check for critical symptoms
+    has_critical, _ = check_critical_symptoms(found)
+    
+    # Get doctor recommendations for all predicted diseases
+    predicted_diseases = [p['disease'] for p in top_3_predictions]
+    doctor_recommendations = get_doctor_recommendations(predicted_diseases)
 
     return jsonify({
-        "disease": disease,
+        "success": True,
+        "predictions": top_3_predictions,  # Array of top 3 predictions
+        "primary_disease": best_prediction['disease'],  # Most likely
+        "primary_confidence": best_prediction['confidence'],
+        "severity_score": severity_score,
         "urgency": urgency,
-        "confidence": confidence,
+        "urgency_message": urgency_message,
+        "has_critical_symptoms": has_critical,
         "symptoms_detected": found,
-        "possible_conditions": alternatives[:2] if alternatives else []
+        "symptom_count": len(found),
+        "doctor_recommendations": doctor_recommendations
     })
 
 # ==================== USER AUTHENTICATION ====================
