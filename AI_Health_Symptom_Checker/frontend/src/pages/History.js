@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const API = "http://localhost:10000";
+const API = "https://medisense-zpu2.onrender.com";
 
 function History() {
   const [history, setHistory] = useState([]);

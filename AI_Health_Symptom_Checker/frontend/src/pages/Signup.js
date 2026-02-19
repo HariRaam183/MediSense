@@ -25,7 +25,7 @@ function Signup() {
     setLoading(true);
     setError("");
     try {
-      const res = await axios.post("http://localhost:10000/signup", {
+      const res = await axios.post("https://medisense-zpu2.onrender.com/signup", {
         name,
         email,
         password,

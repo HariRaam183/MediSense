@@ -19,7 +19,7 @@ function Login() {
     setError("");
     
     try {
-      const res = await axios.post("http://localhost:10000/login", {
+      const res = await axios.post("https://medisense-zpu2.onrender.com/login", {
         email,
         password
       });

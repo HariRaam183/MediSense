@@ -42,7 +42,7 @@ function MedicalForm() {
     }
     setLoading(true);
     try {
-      const res = await axios.post("http://localhost:10000/predict_text", {
+      const res = await axios.post("https://medisense-zpu2.onrender.com/predict_text", {
         age,
         gender,
         duration,
@@ -52,7 +52,7 @@ function MedicalForm() {
       
       // Save to history if prediction was successful
       if (res.data.success && res.data.predictions && res.data.predictions.length > 0 && user) {
-        await axios.post("http://localhost:10000/history/add", {
+        await axios.post("https://medisense-zpu2.onrender.com/history/add", {
           email: user.email,
           symptoms_text: issues,
           symptoms_detected: res.data.symptoms_detected,
