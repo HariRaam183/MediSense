@@ -9,6 +9,7 @@ function History() {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -98,7 +99,7 @@ function History() {
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
       `}</style>
       {/* Header */}
-      <nav style={{
+      <nav className="nav-bar" style={{
         background: "rgba(255,255,255,0.95)",
         backdropFilter: "blur(20px)",
         padding: "15px 50px",
@@ -123,9 +124,11 @@ function History() {
           }}>
             <span style={{fontSize: "24px"}}>🩺</span>
           </div>
-          <span style={{fontSize: "22px", fontWeight: "800", background: "linear-gradient(135deg, #0288D1, #26C6DA)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent"}}>MediSense</span>
+          <span className="nav-logo-text" style={{fontSize: "22px", fontWeight: "800", background: "linear-gradient(135deg, #0288D1, #26C6DA)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent"}}>MediSense</span>
         </Link>
-        <div style={{display: "flex", gap: "12px"}}>
+
+        {/* Desktop nav links */}
+        <div className="nav-links-desktop" style={{display: "flex", gap: "12px"}}>
           <Link to="/health">
             <button style={{
               padding: "10px 24px",
@@ -160,13 +163,52 @@ function History() {
             >🏠 Home</button>
           </Link>
         </div>
+
+        {/* Hamburger button for mobile */}
+        <button className="hamburger-btn" onClick={() => setMenuOpen(!menuOpen)}>
+          ☰
+        </button>
       </nav>
 
+      {/* Mobile Menu Overlay */}
+      <div className={`mobile-menu-overlay ${menuOpen ? 'open' : ''}`} onClick={() => setMenuOpen(false)} />
+      
+      {/* Mobile Slide-in Menu */}
+      <div className={`mobile-menu ${menuOpen ? 'open' : ''}`}>
+        <button className="close-btn" onClick={() => setMenuOpen(false)}>✕</button>
+        <Link to="/health" onClick={() => setMenuOpen(false)}>
+          <button style={{
+            padding: "14px 24px",
+            background: "linear-gradient(135deg, #66BB6A, #4CAF50)",
+            color: "white",
+            border: "none",
+            borderRadius: "14px",
+            cursor: "pointer",
+            fontWeight: "600",
+            fontSize: "15px",
+            width: "100%"
+          }}>+ New Check</button>
+        </Link>
+        <Link to="/" onClick={() => setMenuOpen(false)}>
+          <button style={{
+            padding: "14px 24px",
+            background: "white",
+            color: "#0288D1",
+            border: "2px solid #B3E5FC",
+            borderRadius: "14px",
+            cursor: "pointer",
+            fontWeight: "600",
+            fontSize: "15px",
+            width: "100%"
+          }}>🏠 Home</button>
+        </Link>
+      </div>
+
       {/* Content */}
-      <div style={{padding: "40px", maxWidth: "1000px", margin: "0 auto"}}>
+      <div className="page-content" style={{padding: "40px", maxWidth: "1000px", margin: "0 auto"}}>
         {/* Page Title */}
         <div style={{marginBottom: "35px"}}>
-          <h1 style={{
+          <h1 className="history-title page-title" style={{
             background: "linear-gradient(135deg, #0288D1, #26C6DA)",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
@@ -178,7 +220,7 @@ function History() {
         </div>
 
         {user && (
-          <div style={{
+          <div className="user-info-card" style={{
             background: "linear-gradient(135deg, #0288D1 0%, #26C6DA 100%)",
             padding: "30px 35px",
             borderRadius: "20px",
@@ -248,7 +290,7 @@ function History() {
           </div>
         ) : (
           <>
-            <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "30px"}}>
+            <div className="history-header-row" style={{display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "30px"}}>
               <h3 style={{margin: 0, color: "#263238", fontSize: "22px", fontWeight: "700"}}>📊 Recent Checks</h3>
               <button 
                 onClick={clearHistory}
@@ -271,7 +313,7 @@ function History() {
             </div>
 
             {history.map((entry, idx) => (
-              <div key={idx} style={{
+              <div key={idx} className="history-entry" style={{
                 background: "white",
                 padding: "30px",
                 borderRadius: "20px",
@@ -284,7 +326,7 @@ function History() {
               onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-3px)'}
               onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
               >
-                <div style={{display: "flex", justifyContent: "space-between", marginBottom: "18px"}}>
+                <div className="history-entry-header" style={{display: "flex", justifyContent: "space-between", marginBottom: "18px"}}>
                   <span style={{color: "#78909C", fontSize: "14px", fontWeight: "600"}}>
                     📅 {new Date(entry.date).toLocaleDateString('en-US', {
                       year: 'numeric',
@@ -301,7 +343,8 @@ function History() {
                     borderRadius: "20px",
                     fontSize: "12px",
                     fontWeight: "800",
-                    border: `1px solid ${getUrgencyColor(entry.urgency)}30`
+                    border: `1px solid ${getUrgencyColor(entry.urgency)}30`,
+                    whiteSpace: "nowrap"
                   }}>
                     {entry.urgency} Urgency
                   </span>
@@ -312,7 +355,7 @@ function History() {
                   <p style={{margin: 0, fontStyle: "italic", color: "#263238", fontSize: "15px", lineHeight: "1.6"}}>"{entry.symptoms_text}"</p>
                 </div>
 
-                <div style={{
+                <div className="history-result-row" style={{
                   background: "linear-gradient(135deg, rgba(227, 242, 253, 0.5), rgba(232, 245, 233, 0.5))",
                   padding: "18px",
                   borderRadius: "14px",

@@ -70,7 +70,7 @@ function Login() {
       <span className="medical-icon-float" style={{bottom: "30%", right: "25%", animationDelay: "1.5s"}}>💉</span>
       <span className="medical-icon-float" style={{top: "40%", left: "20%", animationDelay: "2.5s"}}>🧬</span>
 
-      <div style={{
+      <div className="auth-card" style={{
         background: "white",
         padding: "55px 45px",
         borderRadius: "25px",
@@ -82,7 +82,7 @@ function Login() {
         border: "1px solid rgba(2, 136, 209, 0.1)"
       }}>
         <div style={{textAlign: "center", marginBottom: "35px"}}>
-          <div style={{
+          <div className="auth-icon-container" style={{
             background: "linear-gradient(135deg, #0288D1, #26C6DA)",
             padding: "18px",
             borderRadius: "20px",

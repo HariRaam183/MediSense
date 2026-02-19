@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 
 function Home() {
   const [user, setUser] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem("user");
@@ -23,6 +24,7 @@ function Home() {
   const logout = () => {
     localStorage.removeItem("user");
     setUser(null);
+    setMenuOpen(false);
   };
 
   return (
@@ -34,12 +36,12 @@ function Home() {
       overflow: "hidden"
     }}>
       {/* Animated floating medical icons background */}
-      <div style={{position: "absolute", top: "10%", left: "5%", fontSize: "40px", opacity: "0.1", animation: "float 6s ease-in-out infinite"}}>💊</div>
-      <div style={{position: "absolute", top: "20%", right: "8%", fontSize: "35px", opacity: "0.1", animation: "float 7s ease-in-out infinite 1s"}}>🩺</div>
-      <div style={{position: "absolute", bottom: "25%", left: "10%", fontSize: "45px", opacity: "0.1", animation: "float 8s ease-in-out infinite 2s"}}>❤️</div>
-      <div style={{position: "absolute", top: "60%", right: "15%", fontSize: "38px", opacity: "0.1", animation: "float 6.5s ease-in-out infinite 1.5s"}}>🏥</div>
-      <div style={{position: "absolute", bottom: "15%", right: "25%", fontSize: "42px", opacity: "0.1", animation: "float 7.5s ease-in-out infinite 0.5s"}}>💉</div>
-      <div style={{position: "absolute", top: "35%", left: "20%", fontSize: "36px", opacity: "0.1", animation: "float 6.8s ease-in-out infinite 2.5s"}}>🧬</div>
+      <div className="floating-icon" style={{position: "absolute", top: "10%", left: "5%", fontSize: "40px", opacity: "0.1", animation: "float 6s ease-in-out infinite"}}>💊</div>
+      <div className="floating-icon" style={{position: "absolute", top: "20%", right: "8%", fontSize: "35px", opacity: "0.1", animation: "float 7s ease-in-out infinite 1s"}}>🩺</div>
+      <div className="floating-icon" style={{position: "absolute", bottom: "25%", left: "10%", fontSize: "45px", opacity: "0.1", animation: "float 8s ease-in-out infinite 2s"}}>❤️</div>
+      <div className="floating-icon" style={{position: "absolute", top: "60%", right: "15%", fontSize: "38px", opacity: "0.1", animation: "float 6.5s ease-in-out infinite 1.5s"}}>🏥</div>
+      <div className="floating-icon" style={{position: "absolute", bottom: "15%", right: "25%", fontSize: "42px", opacity: "0.1", animation: "float 7.5s ease-in-out infinite 0.5s"}}>💉</div>
+      <div className="floating-icon" style={{position: "absolute", top: "35%", left: "20%", fontSize: "36px", opacity: "0.1", animation: "float 6.8s ease-in-out infinite 2.5s"}}>🧬</div>
       
       <style>
         {`
@@ -66,7 +68,7 @@ function Home() {
       </style>
 
       {/* Navigation Bar */}
-      <nav style={{
+      <nav className="nav-bar" style={{
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
@@ -90,10 +92,11 @@ function Home() {
           }}>
             <span style={{fontSize: "28px"}}>🩺</span>
           </div>
-          <span style={{fontSize: "26px", fontWeight: "700", background: "linear-gradient(135deg, #0288D1, #26C6DA)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent"}}>MediSense</span>
+          <span className="nav-logo-text" style={{fontSize: "26px", fontWeight: "700", background: "linear-gradient(135deg, #0288D1, #26C6DA)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent"}}>MediSense</span>
         </div>
         
-        <div style={{display: "flex", gap: "12px", alignItems: "center"}}>
+        {/* Desktop nav links */}
+        <div className="nav-links-desktop" style={{display: "flex", gap: "12px", alignItems: "center"}}>
           {user ? (
             <>
               <span style={{color: "#546E7A", fontSize: "15px"}}>Welcome, <strong style={{color: "#0288D1"}}>{user.name}</strong></span>
@@ -168,17 +171,103 @@ function Home() {
             </>
           )}
         </div>
+
+        {/* Hamburger button for mobile */}
+        <button className="hamburger-btn" onClick={() => setMenuOpen(!menuOpen)}>
+          ☰
+        </button>
       </nav>
 
+      {/* Mobile Menu Overlay */}
+      <div className={`mobile-menu-overlay ${menuOpen ? 'open' : ''}`} onClick={() => setMenuOpen(false)} />
+      
+      {/* Mobile Slide-in Menu */}
+      <div className={`mobile-menu ${menuOpen ? 'open' : ''}`}>
+        <button className="close-btn" onClick={() => setMenuOpen(false)}>✕</button>
+        {user ? (
+          <>
+            <div style={{padding: "12px 0", color: "#546E7A", fontSize: "15px", borderBottom: "1px solid #E3F2FD", marginBottom: "8px"}}>
+              Welcome, <strong style={{color: "#0288D1"}}>{user.name}</strong>
+            </div>
+            <Link to="/health" onClick={() => setMenuOpen(false)}>
+              <button style={{
+                padding: "14px 24px",
+                background: "linear-gradient(135deg, #66BB6A 0%, #4CAF50 100%)",
+                color: "white",
+                border: "none",
+                borderRadius: "14px",
+                cursor: "pointer",
+                fontWeight: "600",
+                fontSize: "15px",
+                width: "100%"
+              }}>✨ Check Symptoms</button>
+            </Link>
+            <Link to="/history" onClick={() => setMenuOpen(false)}>
+              <button style={{
+                padding: "14px 24px",
+                background: "white",
+                color: "#0288D1",
+                border: "2px solid #B3E5FC",
+                borderRadius: "14px",
+                cursor: "pointer",
+                fontWeight: "600",
+                fontSize: "15px",
+                width: "100%"
+              }}>📋 History</button>
+            </Link>
+            <button onClick={logout} style={{
+              padding: "14px 24px",
+              background: "#ECEFF1",
+              color: "#546E7A",
+              border: "none",
+              borderRadius: "14px",
+              cursor: "pointer",
+              fontSize: "15px",
+              fontWeight: "500",
+              width: "100%"
+            }}>Logout</button>
+          </>
+        ) : (
+          <>
+            <Link to="/login" onClick={() => setMenuOpen(false)}>
+              <button style={{
+                padding: "14px 24px",
+                background: "white",
+                color: "#0288D1",
+                border: "2px solid #B3E5FC",
+                borderRadius: "14px",
+                cursor: "pointer",
+                fontWeight: "600",
+                fontSize: "15px",
+                width: "100%"
+              }}>Login</button>
+            </Link>
+            <Link to="/signup" onClick={() => setMenuOpen(false)}>
+              <button style={{
+                padding: "14px 24px",
+                background: "linear-gradient(135deg, #0288D1 0%, #26C6DA 100%)",
+                color: "white",
+                border: "none",
+                borderRadius: "14px",
+                cursor: "pointer",
+                fontWeight: "600",
+                fontSize: "15px",
+                width: "100%"
+              }}>Sign Up Free</button>
+            </Link>
+          </>
+        )}
+      </div>
+
       {/* Hero Section */}
-      <div style={{
+      <div className="hero-section" style={{
         background: "linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(227,242,253,0.8) 100%)",
         padding: "120px 60px 100px",
         position: "relative",
         overflow: "hidden"
       }}>
         {/* Decorative medical elements */}
-        <div style={{
+        <div className="hero-decorative-circle" style={{
           position: "absolute",
           width: "500px",
           height: "500px",
@@ -188,7 +277,7 @@ function Home() {
           right: "-150px",
           animation: "pulse 4s ease-in-out infinite"
         }}></div>
-        <div style={{
+        <div className="hero-decorative-circle" style={{
           position: "absolute",
           width: "400px",
           height: "400px",
@@ -199,7 +288,7 @@ function Home() {
           animation: "pulse 5s ease-in-out infinite 1s"
         }}></div>
 
-        <div style={{
+        <div className="hero-content" style={{
           maxWidth: "1300px",
           margin: "0 auto",
           display: "flex",
@@ -210,7 +299,7 @@ function Home() {
           zIndex: 1
         }}>
           <div style={{flex: 1, animation: "slideIn 0.8s ease-out"}}>
-            <div style={{
+            <div className="hero-badge" style={{
               display: "inline-block",
               background: "linear-gradient(135deg, #E3F2FD, #C8E6C9)",
               padding: "8px 20px",
@@ -222,7 +311,7 @@ function Home() {
             }}>
               🏥 AI-Powered Health Assistant
             </div>
-            <h1 style={{
+            <h1 className="hero-title" style={{
               fontSize: "62px",
               background: "linear-gradient(135deg, #0288D1, #66BB6A)",
               WebkitBackgroundClip: "text",
@@ -234,7 +323,7 @@ function Home() {
             }}>
               Your Health,<br/>Our Priority
             </h1>
-            <p style={{
+            <p className="hero-desc" style={{
               fontSize: "20px",
               color: "#546E7A",
               marginBottom: "45px",
@@ -246,9 +335,9 @@ function Home() {
             </p>
             
             {!user ? (
-              <div style={{display: "flex", gap: "18px", flexWrap: "wrap"}}>
-                <Link to="/signup">
-                  <button className="hover-lift" style={{
+              <div className="hero-buttons" style={{display: "flex", gap: "18px", flexWrap: "wrap"}}>
+                <Link to="/signup" style={{flex: "1 1 auto"}}>
+                  <button className="hover-lift hero-btn-primary" style={{
                     padding: "20px 45px",
                     fontSize: "17px",
                     background: "linear-gradient(135deg, #0288D1 0%, #26C6DA 100%)",
@@ -261,14 +350,16 @@ function Home() {
                     transition: "all 0.3s ease",
                     display: "flex",
                     alignItems: "center",
-                    gap: "10px"
+                    justifyContent: "center",
+                    gap: "10px",
+                    width: "100%"
                   }}>
                     <span>Get Started — It's Free</span>
                     <span>→</span>
                   </button>
                 </Link>
-                <Link to="/login">
-                  <button className="hover-grow" style={{
+                <Link to="/login" style={{flex: "1 1 auto"}}>
+                  <button className="hover-grow hero-btn-secondary" style={{
                     padding: "20px 45px",
                     fontSize: "17px",
                     background: "white",
@@ -277,7 +368,8 @@ function Home() {
                     borderRadius: "30px",
                     cursor: "pointer",
                     fontWeight: "600",
-                    transition: "all 0.3s ease"
+                    transition: "all 0.3s ease",
+                    width: "100%"
                   }}>
                     I have an account
                   </button>
@@ -285,7 +377,7 @@ function Home() {
               </div>
             ) : (
               <Link to="/health">
-                <button className="hover-lift" style={{
+                <button className="hover-lift hero-btn-primary" style={{
                   padding: "20px 50px",
                   fontSize: "18px",
                   background: "linear-gradient(135deg, #66BB6A 0%, #4CAF50 100%)",
@@ -304,7 +396,7 @@ function Home() {
           </div>
 
           {/* Hero illustration */}
-          <div style={{
+          <div className="hero-illustration" style={{
             position: "relative",
             animation: "float 6s ease-in-out infinite"
           }}>
@@ -330,13 +422,13 @@ function Home() {
       </div>
 
       {/* Stats Section */}
-      <div style={{
+      <div className="stats-section" style={{
         background: "white",
         padding: "50px 60px",
         boxShadow: "0 -8px 30px rgba(2, 136, 209, 0.08)",
         borderTop: "1px solid rgba(2, 136, 209, 0.1)"
       }}>
-        <div style={{
+        <div className="stats-container" style={{
           maxWidth: "1200px",
           margin: "0 auto",
           display: "flex",
@@ -367,13 +459,13 @@ function Home() {
       </div>
 
       {/* How It Works Section */}
-      <div style={{
+      <div className="section-padding" style={{
         padding: "100px 60px",
         background: "linear-gradient(135deg, rgba(227, 242, 253, 0.3) 0%, rgba(232, 245, 233, 0.3) 100%)",
         position: "relative"
       }}>
         <div style={{maxWidth: "1300px", margin: "0 auto"}}>
-          <div style={{
+          <div className="section-badge" style={{
             display: "inline-block",
             background: "linear-gradient(135deg, #E3F2FD, #C8E6C9)",
             padding: "10px 25px",
@@ -387,7 +479,7 @@ function Home() {
           }}>
             HOW IT WORKS
           </div>
-          <h2 style={{
+          <h2 className="section-title" style={{
             textAlign: "center",
             fontSize: "46px",
             background: "linear-gradient(135deg, #0288D1, #66BB6A)",
@@ -396,7 +488,7 @@ function Home() {
             marginBottom: "15px",
             fontWeight: "800"
           }}>Simple. Fast. Accurate.</h2>
-          <p style={{
+          <p className="section-subtitle" style={{
             textAlign: "center",
             color: "#546E7A",
             marginBottom: "70px",
@@ -405,7 +497,7 @@ function Home() {
             margin: "0 auto 70px"
           }}>Get health insights in three simple steps</p>
 
-          <div style={{
+          <div className="steps-container" style={{
             display: "flex",
             justifyContent: "center",
             gap: "40px",
@@ -416,7 +508,7 @@ function Home() {
               {step: "2", icon: "🤖", title: "AI Analysis", desc: "Our machine learning model analyzes your symptoms against thousands of medical cases.", color: "#66BB6A"},
               {step: "3", icon: "📊", title: "Get Results", desc: "Receive instant predictions with confidence levels and recommended actions.", color: "#26C6DA"}
             ].map((item, idx) => (
-              <div key={idx} className="hover-lift" style={{
+              <div key={idx} className="hover-lift step-card" style={{
                 background: "white",
                 padding: "50px 35px",
                 borderRadius: "25px",
@@ -454,12 +546,12 @@ function Home() {
       </div>
 
       {/* Features Section */}
-      <div style={{
+      <div className="section-padding" style={{
         padding: "100px 60px",
         background: "white"
       }}>
         <div style={{maxWidth: "1300px", margin: "0 auto"}}>
-          <div style={{
+          <div className="section-badge" style={{
             display: "inline-block",
             background: "linear-gradient(135deg, #E3F2FD, #C8E6C9)",
             padding: "10px 25px",
@@ -473,7 +565,7 @@ function Home() {
           }}>
             WHY CHOOSE US
           </div>
-          <h2 style={{
+          <h2 className="section-title" style={{
             textAlign: "center",
             fontSize: "46px",
             background: "linear-gradient(135deg, #0288D1, #66BB6A)",
@@ -483,7 +575,7 @@ function Home() {
             fontWeight: "800"
           }}>Trusted Healthcare Companion</h2>
 
-          <div style={{
+          <div className="features-grid" style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
             gap: "35px"
@@ -527,7 +619,7 @@ function Home() {
 
       {/* CTA Section */}
       {!user && (
-        <div style={{
+        <div className="cta-section" style={{
           padding: "100px 60px",
           background: "linear-gradient(135deg, #0288D1 0%, #26C6DA 50%, #66BB6A 100%)",
           textAlign: "center",
@@ -535,7 +627,7 @@ function Home() {
           overflow: "hidden"
         }}>
           {/* Decorative elements */}
-          <div style={{
+          <div className="hero-decorative-circle" style={{
             position: "absolute",
             width: "400px",
             height: "400px",
@@ -545,7 +637,7 @@ function Home() {
             right: "-100px",
             animation: "pulse 4s ease-in-out infinite"
           }}></div>
-          <div style={{
+          <div className="hero-decorative-circle" style={{
             position: "absolute",
             width: "300px",
             height: "300px",
@@ -557,14 +649,14 @@ function Home() {
           }}></div>
           
           <div style={{position: "relative", zIndex: 1}}>
-            <h2 style={{color: "white", fontSize: "48px", marginBottom: "25px", fontWeight: "800"}}>
+            <h2 className="cta-title" style={{color: "white", fontSize: "48px", marginBottom: "25px", fontWeight: "800"}}>
               Ready to Take Control of Your Health?
             </h2>
-            <p style={{color: "rgba(255,255,255,0.95)", fontSize: "20px", marginBottom: "45px", maxWidth: "700px", margin: "0 auto 45px", lineHeight: "1.7"}}>
+            <p className="cta-desc" style={{color: "rgba(255,255,255,0.95)", fontSize: "20px", marginBottom: "45px", maxWidth: "700px", margin: "0 auto 45px", lineHeight: "1.7"}}>
               Join thousands of users who trust MediSense for quick, reliable health insights. Start your journey to better health today.
             </p>
             <Link to="/signup">
-              <button className="hover-lift" style={{
+              <button className="hover-lift cta-btn" style={{
                 padding: "22px 55px",
                 fontSize: "19px",
                 background: "white",
@@ -584,7 +676,7 @@ function Home() {
       )}
 
       {/* Footer */}
-      <footer style={{
+      <footer className="footer" style={{
         background: "linear-gradient(135deg, #263238 0%, #37474F 100%)",
         color: "#B0BEC5",
         padding: "50px 60px",

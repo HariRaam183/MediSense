@@ -80,7 +80,7 @@ function Signup() {
       <span className="medical-icon-signup" style={{bottom: "25%", right: "22%", animationDelay: "1.5s"}}>💉</span>
       <span className="medical-icon-signup" style={{top: "45%", left: "15%", animationDelay: "2.5s"}}>🧬</span>
 
-      <div style={{
+      <div className="auth-card" style={{
         background: "white",
         padding: "50px 45px",
         borderRadius: "25px",
@@ -92,7 +92,7 @@ function Signup() {
         border: "1px solid rgba(2, 136, 209, 0.1)"
       }}>
         <div style={{textAlign: "center", marginBottom: "35px"}}>
-          <div style={{
+          <div className="auth-icon-container" style={{
             background: "linear-gradient(135deg, #0288D1, #26C6DA)",
             padding: "18px",
             borderRadius: "20px",
@@ -214,7 +214,7 @@ function Signup() {
               onBlur={(e) => e.target.style.borderColor = "#E3F2FD"}
             />
           </div>
-          <div style={{display: "flex", gap: "15px", marginBottom: "30px"}}>
+          <div className="form-row" style={{display: "flex", gap: "15px", marginBottom: "30px"}}>
             <div style={{flex: 1}}>
               <label style={{
                 display: "block",

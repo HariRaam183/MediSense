@@ -10,6 +10,7 @@ function MedicalForm() {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -81,7 +82,7 @@ function MedicalForm() {
         @keyframes pulse-form { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
       `}</style>
       {/* Header */}
-      <nav style={{
+      <nav className="nav-bar" style={{
         background: "rgba(255,255,255,0.95)",
         backdropFilter: "blur(20px)",
         padding: "15px 50px",
@@ -106,9 +107,11 @@ function MedicalForm() {
           }}>
             <span style={{fontSize: "24px"}}>🩺</span>
           </div>
-          <span style={{fontSize: "22px", fontWeight: "800", background: "linear-gradient(135deg, #0288D1, #26C6DA)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent"}}>MediSense</span>
+          <span className="nav-logo-text" style={{fontSize: "22px", fontWeight: "800", background: "linear-gradient(135deg, #0288D1, #26C6DA)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent"}}>MediSense</span>
         </Link>
-        <div style={{display: "flex", gap: "12px", alignItems: "center"}}>
+        
+        {/* Desktop nav links */}
+        <div className="nav-links-desktop" style={{display: "flex", gap: "12px", alignItems: "center"}}>
           {user && <span style={{color: "#546E7A", marginRight: "5px", fontWeight: "500"}}>Hi, <strong style={{color: "#0288D1"}}>{user.name}</strong></span>}
           <Link to="/history">
             <button style={{
@@ -158,10 +161,65 @@ function MedicalForm() {
           onMouseOut={(e) => e.target.style.transform = 'translateY(0)'}
           >🚪 Logout</button>
         </div>
+
+        {/* Hamburger button for mobile */}
+        <button className="hamburger-btn" onClick={() => setMenuOpen(!menuOpen)}>
+          ☰
+        </button>
       </nav>
 
-      <div style={{padding:"40px", maxWidth:"750px", margin:"auto"}}>
-        <div style={{background: "white", padding: "45px", borderRadius: "25px", boxShadow: "0 15px 50px rgba(2, 136, 209, 0.1)", border: "1px solid rgba(2, 136, 209, 0.08)"}}>
+      {/* Mobile Menu Overlay */}
+      <div className={`mobile-menu-overlay ${menuOpen ? 'open' : ''}`} onClick={() => setMenuOpen(false)} />
+      
+      {/* Mobile Slide-in Menu */}
+      <div className={`mobile-menu ${menuOpen ? 'open' : ''}`}>
+        <button className="close-btn" onClick={() => setMenuOpen(false)}>✕</button>
+        {user && (
+          <div style={{padding: "12px 0", color: "#546E7A", fontSize: "15px", borderBottom: "1px solid #E3F2FD", marginBottom: "8px"}}>
+            Hi, <strong style={{color: "#0288D1"}}>{user.name}</strong>
+          </div>
+        )}
+        <Link to="/history" onClick={() => setMenuOpen(false)}>
+          <button style={{
+            padding: "14px 24px",
+            background: "white",
+            color: "#0288D1",
+            border: "2px solid #B3E5FC",
+            borderRadius: "14px",
+            cursor: "pointer",
+            fontWeight: "600",
+            fontSize: "15px",
+            width: "100%"
+          }}>📋 History</button>
+        </Link>
+        <Link to="/" onClick={() => setMenuOpen(false)}>
+          <button style={{
+            padding: "14px 24px",
+            background: "white",
+            color: "#0288D1",
+            border: "2px solid #B3E5FC",
+            borderRadius: "14px",
+            cursor: "pointer",
+            fontWeight: "600",
+            fontSize: "15px",
+            width: "100%"
+          }}>🏠 Home</button>
+        </Link>
+        <button onClick={() => { logout(); setMenuOpen(false); }} style={{
+          padding: "14px 24px",
+          background: "linear-gradient(135deg, #EF5350, #E53935)",
+          color: "white",
+          border: "none",
+          borderRadius: "14px",
+          cursor: "pointer",
+          fontSize: "15px",
+          fontWeight: "700",
+          width: "100%"
+        }}>🚪 Logout</button>
+      </div>
+
+      <div className="page-content" style={{padding:"40px", maxWidth:"750px", margin:"auto"}}>
+        <div className="form-card" style={{background: "white", padding: "45px", borderRadius: "25px", boxShadow: "0 15px 50px rgba(2, 136, 209, 0.1)", border: "1px solid rgba(2, 136, 209, 0.08)"}}>
           <h2 style={{
             background: "linear-gradient(135deg, #0288D1, #26C6DA)",
             WebkitBackgroundClip: "text",
@@ -172,7 +230,7 @@ function MedicalForm() {
           </h2>
           <p style={{textAlign: "center", color: "#546E7A", marginBottom: "35px", fontSize: "15px"}}>Tell us how you're feeling in your own words</p>
 
-          <div style={{display: "flex", gap: "20px", marginBottom: "22px"}}>
+          <div className="form-row" style={{display: "flex", gap: "20px", marginBottom: "22px"}}>
             <div style={{flex: 1}}>
               <label style={{display: "block", marginBottom: "8px", color: "#263238", fontWeight: "700", fontSize: "14px"}}>🎂 Age</label>
               <input 
@@ -249,7 +307,7 @@ function MedicalForm() {
         </div>
 
         {result && result.success && result.predictions && result.predictions.length > 0 && (
-        <div style={{
+        <div className="result-card" style={{
           marginTop:"30px", 
           background: "white",
           borderRadius:"25px",
@@ -308,9 +366,9 @@ function MedicalForm() {
                 boxShadow: idx === 0 ? "0 4px 15px rgba(2, 136, 209, 0.15)" : "0 2px 8px rgba(0,0,0,0.04)",
                 transition: "all 0.3s ease"
               }}>
-                <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:"8px"}}>
+                <div className="prediction-row" style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:"8px"}}>
                   <div style={{flex: 1}}>
-                    <div style={{display:"flex", alignItems:"center", gap:"10px"}}>
+                    <div style={{display:"flex", alignItems:"center", gap:"10px", flexWrap: "wrap"}}>
                       <span style={{
                         fontSize:"20px",
                         fontWeight:"800",
@@ -330,14 +388,15 @@ function MedicalForm() {
                       </h4>
                     </div>
                   </div>
-                  <div style={{
+                  <div className="prediction-badge" style={{
                     background: idx === 0 ? "linear-gradient(135deg, #0288D1, #26C6DA)" : "#B0BEC5",
                     color:"white",
                     padding:"10px 20px",
                     borderRadius:"25px",
                     fontWeight:"800",
                     fontSize: idx === 0 ? "16px" : "14px",
-                    boxShadow: idx === 0 ? "0 4px 12px rgba(2, 136, 209, 0.3)" : "none"
+                    boxShadow: idx === 0 ? "0 4px 12px rgba(2, 136, 209, 0.3)" : "none",
+                    whiteSpace: "nowrap"
                   }}>
                     {prediction.confidence}%
                   </div>
@@ -413,7 +472,7 @@ function MedicalForm() {
 
           {/* Doctor Recommendations */}
           {result.doctor_recommendations && result.doctor_recommendations.length > 0 && (
-            <div style={{
+            <div className="doctor-recs" style={{
               background: "linear-gradient(135deg, #0288D1 0%, #26C6DA 100%)",
               padding: "25px",
               borderRadius: "16px",
